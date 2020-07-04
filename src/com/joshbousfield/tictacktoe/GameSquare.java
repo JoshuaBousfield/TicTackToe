@@ -7,24 +7,23 @@ import java.util.HashMap;
 import java.util.Map;
 import com.joshbousfield.tictacktoe.PlayPiece.Type;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 public class GameSquare {
     private final int xPos;
     private final int yPos;
     private final CoOrd coOrd;
     private boolean occupied;
-    private Image tile;
+    private ImageView imageView;
     private Type type;
-    private Map<String, GameSquare> matchingSquares;
 
     public GameSquare(int xPos, int yPos) {
         this.xPos = xPos;
         this.yPos = yPos;
         this.coOrd = new CoOrd(xPos, yPos);
         occupied = false;
-        this.tile = new Image(getClass().getResource("images/gamesquare.png").toExternalForm());//needs testing
+        this.imageView = new ImageView(new Image(getClass().getResource("images/gamesquare.png").toExternalForm()));
         this.type = Type.NONE;
-        this.matchingSquares = new HashMap<>();
     }
 
     public int getxPos() {
@@ -51,32 +50,32 @@ public class GameSquare {
         if (!occupied) {
             this.type = type;
             occupied = true;
+            switch (type) {
+                case O:
+                    this.imageView.setImage(new Image(getClass().getResource("images/gamesquare_o.png").toExternalForm()));
+                    break;
+                case X:
+                    this.imageView.setImage(new Image(getClass().getResource("images/gamesquare_x.png").toExternalForm()));
+                    break;
+            }
         } else {
             throw new IllegalGameMove("Game Square is already occupied");
         }
     }
 
-    public Image getTile() {
-        return tile;
+    public ImageView getImageView() {
+        return imageView;
     }
 
-    public void setTile(Image tile) {
-        this.tile = tile;
-    }
-
-    public Map<String, GameSquare> getMatchingSquares() {
-        return matchingSquares;
-    }
-
-    public void setMatchingSquares(Map<String, GameSquare> matchingSquares) {
-        this.matchingSquares = matchingSquares;
+    public void setImageView(ImageView imageView) {
+        this.imageView = imageView;
     }
 
     public CoOrd getCoOrd() {
         return coOrd;
     }
 
-    public class CoOrd {
+    public static class CoOrd {
         int x;
         int y;
 
