@@ -9,8 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-//TODO make a check for winning combination method
-
 public class MainController {
     @FXML public GridPane gameSquares;
     //needs setters
@@ -27,23 +25,16 @@ public class MainController {
         gridX = 3;
         winCondition = 3;
         playersTurn = true;
-        player = new Player("Josh", new PlayPiece(PlayPiece.Type.O));
+        player = new Player("Josh", new PlayPiece(PlayPiece.Type.X));
         setBoard(gridX, gridY);
         setGrid();
         findCombinations();
-        int x = 0;
-        for (Combination combos : combinations) {
-            combos.printList();
-            x++;
-        }
-        System.out.println(x);
     }
 
     private void setBoard(int xRow, int yRow) {
         for(int x=0; x<xRow; x++) {
             for(int y=0; y<yRow; y++) {
                 GameSquare square = new GameSquare(x, y);
-                System.out.println(square.getCoOrd().toString());
                 squares.put(square.getCoOrd().toString(), square);
             }
         }
@@ -110,6 +101,17 @@ public class MainController {
         }
     }
 
+    private Combination findWinningCombination() {
+        for (Combination combo : combinations) {
+            PlayPiece.Type type = combo.checkWin();
+            if (!type.equals(PlayPiece.Type.NONE)) {
+                System.out.println("winning type: " + type.toString());
+                return combo;
+            }
+        }
+        return null;
+    }
+
     private void setGrid() {
         for (Map.Entry<String, GameSquare> square : squares.entrySet()) {
             square.getValue().getImageView().setOnMouseClicked(mouseEvent -> placePiece(square.getValue()));
@@ -122,7 +124,8 @@ public class MainController {
         if (playersTurn) {
             try {
                 square.setType(player.getPlayPiece().getType());
-                playersTurn = false;
+                findWinningCombination();
+//                playersTurn = false;
             } catch (IllegalGameMove e) {
                 System.out.println(e.getMessage());
             }
