@@ -11,21 +11,24 @@ import java.util.Map;
 
 public class MainController {
     @FXML public GridPane gameSquares;
-    //needs setters
     private int gridX;
     private int gridY;
     private int winCondition;
+    private int movesPlayed;
     private final Map<String, GameSquare> squares = new HashMap<>();
     private final List<Combination> combinations = new ArrayList<>();
-    private boolean playersTurn;
-    private Player player;
+    private Player currentPlayersMove;
+    private Player player1;
+    private Player player2;
 
+    //TODO check for a draw
     public void initialize() {
         gridY = 3;
         gridX = 3;
         winCondition = 3;
-        playersTurn = true;
-        player = new Player("Josh", new PlayPiece(PlayPiece.Type.X));
+        player1 = new Player("player1", new PlayPiece(PlayPiece.Type.X));
+        player2 = new Player("player2", new PlayPiece(PlayPiece.Type.O));
+        currentPlayersMove = player1;
         setBoard(gridX, gridY);
         setGrid();
         findCombinations();
@@ -103,8 +106,8 @@ public class MainController {
 
     private Combination findWinningCombination() {
         for (Combination combo : combinations) {
-            PlayPiece.Type type = combo.checkWin();
-            if (!type.equals(PlayPiece.Type.NONE)) {
+            String type = combo.checkWin();
+            if (type != null) {
                 System.out.println("winning type: " + type.toString());
                 return combo;
             }
@@ -121,14 +124,26 @@ public class MainController {
     }
 
     private void placePiece(GameSquare square) {
-        if (playersTurn) {
-            try {
-                square.setType(player.getPlayPiece().getType());
-                findWinningCombination();
-//                playersTurn = false;
-            } catch (IllegalGameMove e) {
-                System.out.println(e.getMessage());
+        try {
+            square.setType(currentPlayersMove.getPlayPiece().getType());
+            Combination combination = findWinningCombination();
+            movesPlayed++;
+            if (combination != null) {
+                System.out.println("winning type" + combination.getWinningType());
+            } else if (movesPlayed == (gridX * gridY)) {
+                System.out.println("Draw");
             }
+            movePlayed();
+
+        } catch (IllegalGameMove e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void movePlayed() {
+        switch (currentPlayersMove.getName()) {
+            case "player1": this.currentPlayersMove = player2; break;
+            case "player2": this.currentPlayersMove = player1; break;
         }
     }
 }

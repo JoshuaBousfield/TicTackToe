@@ -6,28 +6,30 @@ import com.joshbousfield.tictacktoe.PlayPiece.Type;
 
 public class Combination {
     private List<GameSquare> combinations;
+    private String winningType;
 
     public Combination(List<GameSquare> squares) {
         this.combinations = new ArrayList<>();
         this.combinations.addAll(squares);
+        this.winningType = null;
     }
 
-    //add method to check for win loop through and check that type is all the same and != NONE
-    public Type checkWin() {
+    public String checkWin() {
         Type previousType = Type.NONE;
         for (GameSquare square : combinations) {
             if (square.getType().equals(PlayPiece.Type.NONE)) {
-                return Type.NONE;
+                return null;
             } else if (previousType.equals(Type.NONE)) {
                 previousType = square.getType();
             }
             if (!square.getType().equals(previousType)) {
-                return Type.NONE;
+                return null;
             }
         }
         System.out.println("win found");
         printList();
-        return previousType;
+        winningType = previousType.name();
+        return winningType;
     }
 
     public List<GameSquare> getCombinations() {
@@ -40,5 +42,9 @@ public class Combination {
             System.out.println(square.getyPos());
         }
         System.out.println("");
+    }
+
+    public String getWinningType() {
+        return winningType;
     }
 }
